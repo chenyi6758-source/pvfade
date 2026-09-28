@@ -1,5 +1,9 @@
 # pvfade
 
+[![CI](https://github.com/chenyi6758-source/pvfade/actions/workflows/ci.yml/badge.svg)](https://github.com/chenyi6758-source/pvfade/actions/workflows/ci.yml)
+[![License: BSD-3-Clause](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](LICENSE)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](pyproject.toml)
+
 **Degradation-aware design and dispatch optimization for PV-storage systems.**
 
 Most PV-storage sizing tools assume the battery is nameplate-constant: fixed
@@ -71,6 +75,22 @@ onto a PV profile and call it a sizing study — while the literature (e.g.
 recent solar-plus-storage sizing work) explicitly flags that neglecting
 long-term cycling and degradation biases lifecycle cost. pvfade is the
 missing coupling layer: physics-informed fade inside the economic loop.
+
+## Model assumptions & limitations
+
+Honest boundaries of v0.1 — these are roadmap items, not hidden caveats:
+
+- **Weather**: clear-sky irradiance scaled by a `clearness` factor, not
+  measured TMY data. Swap in your own weather series via `pv_kw` inputs
+  wherever it matters.
+- **Battery**: no replacement is modeled — the lifetime simulation stops at
+  end of life (`eol_retention`, default 80% SOH). Calendar aging uses a
+  single coefficient at ~25 °C; temperature- and SOC-dependent aging is
+  future work.
+- **PV modules**: module degradation over the 25-year horizon is not
+  modeled yet.
+- **Dispatch**: rule-based self-consumption maximization only. PyPSA-based
+  LP/MILP dispatch optimization and time-of-use arbitrage arrive in v0.2.
 
 ## Roadmap
 
