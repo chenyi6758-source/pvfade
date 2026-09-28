@@ -1,0 +1,33 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pvfade"
+version = "0.1.0"
+description = "Degradation-aware design and dispatch optimization for PV-storage systems"
+readme = "README.md"
+license = { text = "BSD-3-Clause" }
+requires-python = ">=3.11"
+authors = [{ name = "ChenYi-Nnergy" }]
+keywords = ["photovoltaic", "battery", "degradation", "energy-storage", "optimization", "pvlib", "pybamm"]
+dependencies = [
+    "numpy>=1.24",
+    "pandas>=2.0",
+    "pvlib>=0.10",
+    "scipy>=1.10",
+]
+
+[project.optional-dependencies]
+pybamm = ["pybamm>=25.1"]
+test = ["pytest>=7"]
+
+[project.urls]
+Homepage = "https://github.com/chenyi6758-source/pvfade"
+Issues = "https://github.com/chenyi6758-source/pvfade/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pvfade"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
