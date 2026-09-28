@@ -66,9 +66,9 @@ def simulate_pv_ac(
     """Simulate hourly AC power (kW) of a fixed-tilt PV array for one year.
 
     Uses pvlib's Ineichen clear-sky model scaled by ``clearness`` to emulate
-    average cloud cover, the Hay-Davies transposition is not needed here:
-    :func:`pvlib.irradiance.get_total_irradiance` applies the isotropic sky
-    model, the PVWatts DC model, and the PVWatts inverter model.
+    average cloud cover, the isotropic transposition model via
+    :func:`pvlib.irradiance.get_total_irradiance`, the PVWatts DC model, and
+    the PVWatts inverter model.
 
     Parameters
     ----------
