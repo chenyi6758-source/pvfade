@@ -5,7 +5,11 @@ from pvfade.battery import (
     calibrate_cycle_aging_with_pybamm,
     capacity_retention,
 )
-from pvfade.dispatch import self_consumption_dispatch, simulate_lifetime
+from pvfade.dispatch import (
+    compare_degradation_scenarios,
+    self_consumption_dispatch,
+    simulate_lifetime,
+)
 from pvfade.economics import lcos, npv, simple_payback
 from pvfade.pv import simulate_pv_ac
 from pvfade.sizing import grid_search
@@ -18,6 +22,7 @@ __all__ = [
     "capacity_retention",
     "self_consumption_dispatch",
     "simulate_lifetime",
+    "compare_degradation_scenarios",
     "lcos",
     "npv",
     "simple_payback",

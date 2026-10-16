@@ -10,6 +10,8 @@ dispatch, energy throughput, and economics all feel capacity fade.
 
 from __future__ import annotations
 
+from dataclasses import replace
+
 import numpy as np
 import pandas as pd
 
@@ -169,3 +171,46 @@ def simulate_lifetime(
             }
         )
     return pd.DataFrame(rows)
+
+
+def compare_degradation_scenarios(
+    pv_kw: pd.Series | np.ndarray,
+    load_kw: pd.Series | np.ndarray,
+    spec: BatterySpec,
+    max_years: int = 25,
+    initial_soc_frac: float = 0.5,
+    dt_h: float = 1.0,
+) -> dict[str, pd.DataFrame]:
+    """Run a standard nameplate-vs-degradation lifetime comparison.
+
+    The returned mapping contains ``"degradation_aware"`` and
+    ``"nameplate_constant"`` lifetime tables.  Both scenarios use the same
+    PV/load profiles, dispatch rules, efficiencies, and economic horizon.  The
+    nameplate-constant baseline disables cycle and calendar aging while leaving
+    all other battery parameters unchanged.
+
+    This helper is intentionally a comparison primitive rather than an
+    economic metric: pass the resulting annual series to :func:`pvfade.npv`,
+    :func:`pvfade.lcos`, or a custom report as needed.
+    """
+    degradation_aware = simulate_lifetime(
+        pv_kw,
+        load_kw,
+        spec,
+        max_years=max_years,
+        initial_soc_frac=initial_soc_frac,
+        dt_h=dt_h,
+    )
+    constant_spec = replace(spec, k_cycle=0.0, k_cal=0.0)
+    nameplate_constant = simulate_lifetime(
+        pv_kw,
+        load_kw,
+        constant_spec,
+        max_years=max_years,
+        initial_soc_frac=initial_soc_frac,
+        dt_h=dt_h,
+    )
+    return {
+        "degradation_aware": degradation_aware,
+        "nameplate_constant": nameplate_constant,
+    }

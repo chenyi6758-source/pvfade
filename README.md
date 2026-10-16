@@ -50,6 +50,14 @@ spec = BatterySpec(nominal_kwh=10.0, charge_kw=5.0, discharge_kw=5.0)
 life = simulate_lifetime(pv, load_kw, spec, max_years=25)
 print(life[["year", "retention", "self_consumed_kwh"]].head())
 
+# 3b. Standard nameplate-vs-degradation comparison
+from pvfade import compare_degradation_scenarios
+
+scenarios = compare_degradation_scenarios(pv, load_kw, spec, max_years=25)
+aware = scenarios["degradation_aware"]
+baseline = scenarios["nameplate_constant"]
+print(aware["self_consumed_kwh"].sum(), baseline["self_consumed_kwh"].sum())
+
 # 4. Find the best configuration
 results = grid_search(
     pv_kw_options=[4, 6, 8, 10],

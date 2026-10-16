@@ -3,7 +3,11 @@ import pandas as pd
 import pytest
 
 from pvfade.battery import BatterySpec
-from pvfade.dispatch import self_consumption_dispatch, simulate_lifetime
+from pvfade.dispatch import (
+    compare_degradation_scenarios,
+    self_consumption_dispatch,
+    simulate_lifetime,
+)
 
 
 def _spec(**kwargs):
@@ -103,3 +107,17 @@ def test_simulate_lifetime_stops_at_eol():
     spec = _spec(k_cycle=0.05, k_cal=0.05)
     life = simulate_lifetime(pv, load, spec, max_years=25)
     assert len(life) < 25
+
+
+def test_compare_degradation_scenarios_has_same_horizon_and_distinct_fade():
+    pv = pd.Series(np.full(8760, 2.0))
+    load = pd.Series(np.full(8760, 1.5))
+    scenarios = compare_degradation_scenarios(pv, load, _spec(), max_years=5)
+
+    assert set(scenarios) == {"degradation_aware", "nameplate_constant"}
+    aware = scenarios["degradation_aware"]
+    constant = scenarios["nameplate_constant"]
+    assert len(aware) == len(constant) == 5
+    assert constant["retention"].eq(1.0).all()
+    assert aware["retention"].iloc[-1] < 1.0
+    assert aware["self_consumed_kwh"].iloc[-1] <= constant["self_consumed_kwh"].iloc[-1]
